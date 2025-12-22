@@ -9,22 +9,14 @@ def call(Map config = [:]) {
     def branch = config.get('branch', 'main')
     def creds  = config.get('credentialsId', '')
 
-    pipeline {
-        agent any
-
-        stages {
-            stage('Git Clone') {
-                steps {
-                    script {
-                        gitClone.cloneRepo(
-                            this,
-                            config.gitUrl,
-                            branch,
-                            creds
-                        )
-                    }
-                }
-            }
+    stage('Git Clone') {
+        script {
+            gitClone.cloneRepo(
+                this,
+                config.gitUrl,
+                branch,
+                creds
+            )
         }
     }
 }
