@@ -16,7 +16,7 @@ class CalculatorUtils {
 
     static Integer div(int a, int b) {
         if (b == 0) {
-            return Division by zero not allowed        
+            return null       
         }
         return a / b           
     }
