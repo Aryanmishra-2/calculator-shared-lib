@@ -2,7 +2,7 @@ import com.company.utils.*
 
 def call() {
     stage('Clean Workspace') {
-        new CleanWorkspace(this).run()
+        cleanWorkspace()
     }
 }
 
