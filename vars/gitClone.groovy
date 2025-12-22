@@ -1,4 +1,4 @@
-import org.ci_cd.gitClone
+import org.ci_cd.git.Clone
 
 def call(Map config = [:]) {
 
@@ -11,7 +11,7 @@ def call(Map config = [:]) {
 
     stage('Git Clone') {
         script {
-            gitClone.cloneRepo(
+            Clone.repo(
                 this,
                 config.gitUrl,
                 branch,
