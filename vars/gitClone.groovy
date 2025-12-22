@@ -1,4 +1,4 @@
-import org.ci_cd.git.Clone
+import org.ci_cd.git.*
 
 def call(Map config = [:]) {
 
