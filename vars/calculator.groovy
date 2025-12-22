@@ -1,21 +1,17 @@
 import com.company.utils.CalculatorUtils
 
-def call(String operation, int a, int b) {
+def add(a, b) {
+    return CalculatorUtils.add(a as int, b as int)
+}
 
-    switch (operation) {
-        case "add":
-            return CalculatorUtils.add(a, b)
+def sub(a, b) {
+    return CalculatorUtils.sub(a as int, b as int)
+}
 
-        case "sub":
-            return CalculatorUtils.sub(a, b)
+def mul(a, b) {
+    return CalculatorUtils.mul(a as int, b as int)
+}
 
-        case "mul":
-            return CalculatorUtils.mul(a, b)
-
-        case "div":
-            return CalculatorUtils.div(a, b)
-
-        default:
-            error "Invalid operation: ${operation}"
-    }
+def div(a, b) {
+    return CalculatorUtils.div(a as int, b as int)
 }
