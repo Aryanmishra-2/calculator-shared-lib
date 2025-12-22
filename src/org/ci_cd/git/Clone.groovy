@@ -1,8 +1,8 @@
-package org.ci_cd
+package org.ci_cd.git
 
-class gitClone implements Serializable {
+class Clone implements Serializable {
 
-    static void cloneRepo(script, String url, String branch, String credentialsId) {
+    static void repo(script, String url, String branch, String credentialsId) {
 
         script.checkout([
             $class: 'GitSCM',
