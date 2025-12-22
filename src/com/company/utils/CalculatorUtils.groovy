@@ -14,10 +14,10 @@ class CalculatorUtils {
         return a * b
     }
 
-    static int div(int a, int b) {
+    static Integer div(int a, int b) {
         if (b == 0) {
-            error "Division by zero not allowed"
+            return null        
         }
-        return a / b
+        return a / b           
     }
 }
