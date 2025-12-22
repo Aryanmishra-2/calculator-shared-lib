@@ -14,10 +14,17 @@ class CalculatorUtils {
         return a * b
     }
 
-    static Integer div(int a, int b) {
+    static Map div(int a, int b) {
         if (b == 0) {
-            return null       
+            return [
+                success: false,
+                message: "Division by zero not allowed"
+            ]
         }
-        return a / b           
+
+        return [
+            success: true,
+            value  : a / b
+        ]
     }
 }
