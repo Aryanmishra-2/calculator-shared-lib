@@ -2,12 +2,19 @@ import org.ci_cd.git.Clone
 
 def call(Map config = [:]) {
 
+    // ================== VALIDATION ==================
     if (!config.gitUrl) {
-        error "gitUrl is mandatory"
+        error " gitUrl is mandatory"
     }
 
-    def branch = config.get('branch', 'main')
-    def creds  = config.get('credentialsId', '')
+    // ================== DEFAULTS ==================
+    String branch = config.get('branch', 'main')
+    String credentialsId = config.get('credentialsId', '')
+
+    // ================== STAGES ==================
+    stage('Clean Workspace') {
+        new CleanWorkspace(this).run()
+    }
 
     stage('Git Clone') {
         script {
@@ -15,7 +22,7 @@ def call(Map config = [:]) {
                 this,
                 config.gitUrl,
                 branch,
-                creds
+                credentialsId
             )
         }
     }
