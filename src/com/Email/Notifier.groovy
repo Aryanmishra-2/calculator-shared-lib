@@ -1,4 +1,4 @@
-package org.cloud_ops_crew.utils
+package com.Email
 
 class EmailNotifier implements Serializable {
     def script
