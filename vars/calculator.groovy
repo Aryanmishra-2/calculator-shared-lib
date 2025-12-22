@@ -1,4 +1,10 @@
-import com.company.utils.CalculatorUtils
+import com.company.utils.*
+
+def call() {
+    stage('Clean Workspace') {
+        new CleanWorkspace(this).run()
+    }
+}
 
 def add(a, b) {
     return CalculatorUtils.add(a as int, b as int)
