@@ -1,29 +1,30 @@
-import org.ci_cd.git.*
+package /org.ci_cd.git
 
-def call(Map config = [:]) {
+class PublishReport implements Serializable {
+    def script
 
-    // ================== VALIDATION ==================
-    if (!config.gitUrl) {
-        error " gitUrl is mandatory"
+    PublishReport(script) {
+        this.script = script
     }
 
-    // ================== DEFAULTS ==================
-    String branch = config.get('branch', 'main')
-    String credentialsId = config.get('credentialsId', '')
+    def send(String status, String emailRecipient) {
 
-    // ================== STAGES ==================
-    stage('Clean Workspace') {
-        new CleanWorkspace(this).run()
-    }
+        def reportContent = """
+JOB_NAME=${script.env.JOB_NAME}
+BUILD_NUMBER=${script.env.BUILD_NUMBER}
+STATUS=${status}
+BUILD_URL=${script.env.BUILD_URL}
+TIME=${new Date()}
+"""
 
-    stage('Git Clone') {
-        script {
-            Clone.repo(
-                this,
-                config.gitUrl,
-                branch,
-                credentialsId
-            )
-        }
+        script.writeFile(
+            file: 'report.txt',
+            text: reportContent
+        )
+
+        script.archiveArtifacts artifacts: 'report.txt', allowEmptyArchive: false
+
+        Boolean isSuccess = (status == "SUCCESS")
+        new Email(script).mail(isSuccess, emailRecipient)
     }
 }
