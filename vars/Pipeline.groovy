@@ -2,35 +2,48 @@ import org.ci_cd.git.*
 
 def call(Map config = [:]) {
 
-    if (!config.gitUrl) {
-        error "gitUrl is mandatory"
-    }
-
-    String branch         = config.get('branch', '')
+    String gitUrl         = config.get('gitUrl', '')
+    String branch         = config.get('branch', 'master')
     String credentialsId  = config.get('credentialsId', '')
     String emailRecipient = config.get('emailRecipient', '')
 
-    stage('Clean Workspace') {
-        new CleanWorkspace(this).run()
-    }
+    try {
 
-    stage('Git Clone') {
-        script {
-            Clone.repo(
-                this,
-                config.gitUrl,
-                branch,
-                credentialsId
-            )
-        }
-    }
-
-    stage('Email Success Report') {
-        when { expression { emailRecipient != '' } }
-        steps {
+        stage('Clean Workspace') {
             script {
-                new PublishReport(this).send("SUCCESS", emailRecipient)
+                new CleanWorkspace(this).run()
             }
         }
+
+        stage('Git Clone') {
+            script {
+                Clone.repo(
+                    this,
+                    gitUrl,
+                    branch,
+                    credentialsId
+                )
+            }
+        }
+
+        if (emailRecipient) {
+            stage('Success Email') {
+                script {
+                    new PublishReport(this).send("SUCCESS", emailRecipient)
+                }
+            }
+        }
+
+    } catch (Exception e) {
+
+        if (emailRecipient) {
+            stage('Failure Email') {
+                script {
+                    new PublishReport(this).send("FAILURE", emailRecipient)
+                }
+            }
+        }
+
+        throw e
     }
 }
