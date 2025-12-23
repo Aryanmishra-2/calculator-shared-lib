@@ -1,5 +1,4 @@
 import org.ci_cd.git.*
-
 def call(Map config = [:]) {
 
     if (!config.gitUrl)  { error "gitUrl is mandatory" }
@@ -12,11 +11,11 @@ def call(Map config = [:]) {
     try {
 
         stage('Clean Workspace') {
-            new CleanWorkspace(this).run()
+            new org.ci_cd.git.CleanWorkspace(this).run()
         }
 
         stage('Git Clone') {
-            Clone.repo(
+            org.ci_cd.git.Clone.repo(
                 this,
                 config.gitUrl,
                 branch,
@@ -25,7 +24,7 @@ def call(Map config = [:]) {
         }
 
         stage('Write Artifact') {
-            new ArtifactWriter(this).saveResult("Build number: ${env.BUILD_NUMBER}")
+            new org.ci_cd.git.ArtifactWriter(this).saveResult("Build number: ${env.BUILD_NUMBER}")
         }
 
     } catch (Exception e) {
@@ -34,7 +33,7 @@ def call(Map config = [:]) {
     } finally {
 
         stage('Publish Report') {
-            new PublishReport(this).send(buildStatus, config.email)
+            new org.ci_cd.git.PublishReport(this).send(buildStatus, config.email)
         }
     }
 }
