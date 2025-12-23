@@ -1,4 +1,4 @@
-package /org.ci_cd.git
+package /org.ci_cd.git.*
 
 class PublishReport implements Serializable {
     def script
