@@ -3,7 +3,7 @@ import org.ci_cd.git.*
 def call(Map config = [:]) {
 
     String gitUrl         = config.get('gitUrl', '')
-    String branch         = config.get('branch', 'main')
+    String branch         = config.get('branch', '')
     String credentialsId  = config.get('credentialsId', '')
     String emailRecipient = config.get('emailRecipient', '')
 
@@ -26,24 +26,20 @@ def call(Map config = [:]) {
             }
         }
 
-        stage('Success Email') {
-            when { expression { emailRecipient != '' } }
-            steps {
+        if (emailRecipient) {
+            stage('Success Email') {
                 script {
-                    new PublishReport(this)
-                        .send("SUCCESS", emailRecipient)
+                    new PublishReport(this).send("SUCCESS", emailRecipient)
                 }
             }
         }
 
     } catch (Exception e) {
 
-        stage('Failure Email') {
-            when { expression { emailRecipient != '' } }
-            steps {
+        if (emailRecipient) {
+            stage('Failure Email') {
                 script {
-                    new PublishReport(this)
-                        .send("FAILURE", emailRecipient)
+                    new PublishReport(this).send("FAILURE", emailRecipient)
                 }
             }
         }
