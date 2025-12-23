@@ -6,28 +6,35 @@ def cleanWorkspace() {
 
 def add(a, b) {
     def res = CalculatorUtils.add(a as int, b as int)
-    new ArtifactWriter(this).save("Add: ${res}")
+    saveToArtifact("Add: ${res}")
     return res
 }
 
 def sub(a, b) {
     def res = CalculatorUtils.sub(a as int, b as int)
-    new ArtifactWriter(this).save("Sub: ${res}")
+    saveToArtifact("Sub: ${res}")
     return res
 }
 
 def mul(a, b) {
     def res = CalculatorUtils.mul(a as int, b as int)
-    new ArtifactWriter(this).save("Mul: ${res}")
+    saveToArtifact("Mul: ${res}")
     return res
 }
 
 def div(a, b) {
     def res = CalculatorUtils.div(a as int, b as int)
-    new ArtifactWriter(this).save("Div: ${res}")
+    saveToArtifact("Div: ${res}")
     return res
 }
 
+def saveToArtifact(String content) {
+    sh """
+        mkdir -p artifacts
+        echo "${content}" >> artifacts/result.txt
+    """
+}
+
 def publishReport(status, recipient) {
-    new PublishReport(this).send(status, recipient)
+    new com.company.utils.PublishReport(this).send(status, recipient)
 }
