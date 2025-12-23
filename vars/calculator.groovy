@@ -1,5 +1,4 @@
-import com.company.utils.CleanWorkspace
-import com.company.utils.CalculatorUtils
+import com.company.utils.CleanWorkspace.*
 
 def call() {
     stage('Clean Workspace') {
