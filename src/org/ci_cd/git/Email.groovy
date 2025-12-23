@@ -5,17 +5,14 @@ class Email implements Serializable {
     Email(script) { this.script = script }
 
     def mail(Boolean success, String recipient) {
-
         def buildUrl = script.env.BUILD_URL
         def artifactUrl = "${buildUrl}artifact/artifacts/result.txt"
-        def reportUrl   = "${buildUrl}artifact/report.txt"
         def status = success ? "SUCCESS" : "FAILURE"
 
         def message = """Build #${script.env.BUILD_NUMBER} - ${status}
 Job: ${script.env.JOB_NAME}
 Job URL: ${buildUrl}
-Artifact: ${artifactUrl}
-Report: ${reportUrl}"""
+Artifact: ${artifactUrl}"""
 
         script.echo message
 
