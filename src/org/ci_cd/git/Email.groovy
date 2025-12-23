@@ -1,17 +1,20 @@
-package org.ci_cd.git
+package com.company.utils
 
 class Email implements Serializable {
     def script
     Email(script) { this.script = script }
 
     def mail(Boolean success, String recipient) {
+
         def buildUrl = script.env.BUILD_URL
-        def reportUrl = "${buildUrl}artifact/htmlcov/index.html"
+        def artifactUrl = "${buildUrl}artifact/artifacts/result.txt"
+        def reportUrl   = "${buildUrl}artifact/report.txt"
         def status = success ? "SUCCESS" : "FAILURE"
 
         def message = """Build #${script.env.BUILD_NUMBER} - ${status}
 Job: ${script.env.JOB_NAME}
 Job URL: ${buildUrl}
+Artifact: ${artifactUrl}
 Report: ${reportUrl}"""
 
         script.echo message
