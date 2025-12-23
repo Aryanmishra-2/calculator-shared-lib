@@ -1,42 +1,53 @@
-import com.*
+import org.ci_cd.git.*
 
-def call(Map config) {
-    def reportUrl = ""
+def call(Map config = [:]) {
+
+    String gitUrl         = config.get('gitUrl', '')
+    String branch         = config.get('branch', 'main')
+    String credentialsId  = config.get('credentialsId', '')
+    String emailRecipient = config.get('emailRecipient', '')
 
     try {
+
         stage('Clean Workspace') {
-            new WorkspaceCleaner(this).clean()
+            script {
+                new CleanWorkspace(this).run()
+            }
         }
 
-        stage('Checkout Repository') {
-            new RepoCheckout(this).cloneRepo(
-                config.repoUrl,
-                config.branch ?: 'main',
-                config.credentialsId
-            )
+        stage('Git Clone') {
+            script {
+                Clone.repo(
+                    this,
+                    gitUrl,
+                    branch,
+                    credentialsId
+                )
+            }
         }
 
-        stage('Generate Report') {
-            reportUrl = new ReportGenerator(this).generate("SUCCESS")
+        stage('Success Email') {
+            when { expression { emailRecipient != '' } }
+            steps {
+                script {
+                    new PublishReport(this)
+                        .send("SUCCESS", emailRecipient)
+                }
+            }
         }
 
-        stage('Send Success Notification') {
-            new EmailNotifier(this).send(
-                "SUCCESS",
-                config.email,
-                reportUrl
-            )
+    } catch (Exception e) {
+
+        stage('Failure Email') {
+            when { expression { emailRecipient != '' } }
+            steps {
+                script {
+                    new PublishReport(this)
+                        .send("FAILURE", emailRecipient)
+                }
+            }
         }
 
-    } catch (err) {
-        reportUrl = new ReportGenerator(this).generate("FAILURE")
-
-        new EmailNotifier(this).send(
-            "FAILURE",
-            config.email,
-            reportUrl
-        )
-
-        throw err
+        throw e
     }
 }
