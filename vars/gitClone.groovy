@@ -1,30 +1,40 @@
-package /org.ci_cd.git.*
+package org.ci_cd.git.*
 
-class PublishReport implements Serializable {
-    def script
+def call(Map config = [:]) {
 
-    PublishReport(script) {
-        this.script = script
-    }
+    if (!config.gitUrl)  { error "gitUrl is mandatory" }
+    if (!config.email)   { error "email is mandatory" }
 
-    def send(String status, String emailRecipient) {
+    String branch = config.get('branch', 'main')
+    String credentialsId = config.get('credentialsId', '')
+    String buildStatus = "SUCCESS"
 
-        def reportContent = """
-JOB_NAME=${script.env.JOB_NAME}
-BUILD_NUMBER=${script.env.BUILD_NUMBER}
-STATUS=${status}
-BUILD_URL=${script.env.BUILD_URL}
-TIME=${new Date()}
-"""
+    try {
 
-        script.writeFile(
-            file: 'report.txt',
-            text: reportContent
-        )
+        stage('Clean Workspace') {
+            new CleanWorkspace(this).run()
+        }
 
-        script.archiveArtifacts artifacts: 'report.txt', allowEmptyArchive: false
+        stage('Git Clone') {
+            Clone.repo(
+                this,
+                config.gitUrl,
+                branch,
+                credentialsId
+            )
+        }
 
-        Boolean isSuccess = (status == "SUCCESS")
-        new Email(script).mail(isSuccess, emailRecipient)
+        stage('Write Artifact') {
+            new ArtifactWriter(this).saveResult("Build number: ${env.BUILD_NUMBER}")
+        }
+
+    } catch (Exception e) {
+        buildStatus = "FAILURE"
+        throw e
+    } finally {
+
+        stage('Publish Report') {
+            new PublishReport(this).send(buildStatus, config.email)
+        }
     }
 }
