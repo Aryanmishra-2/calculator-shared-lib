@@ -1,4 +1,4 @@
-package org.ci_cd.git.*
+import org.ci_cd.git.*
 
 def call(Map config = [:]) {
 
