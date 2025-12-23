@@ -1,4 +1,4 @@
-package corg.ci_cd.git
+package org.ci_cd.git
 
 class ArtifactWriter implements Serializable {
     def script
