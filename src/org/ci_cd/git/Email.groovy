@@ -1,4 +1,4 @@
-package com.company.utils
+package org.ci_cd.git
 
 class Email implements Serializable {
     def script
